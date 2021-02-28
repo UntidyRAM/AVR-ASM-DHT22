@@ -1,5 +1,7 @@
 <h1> AVR-ASM-DHT22 :thermometer: </h1>
 
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
 <p align="center">
   <figure>
     <img src="docs/AVR-ASM-DHT22.jpg" alt="A picture of the device." style="width:100%">
