@@ -1,6 +1,6 @@
 <h1> AVR-ASM-DHT22 :thermometer: </h1>
 
-<p>
+<p align="center">
   <figure>
     <img src="docs/AVR-ASM-DHT22.jpg" alt="A picture of the device." style="width:100%">
     <figcaption>This image is Copyright (C) 2021 Nicholas Warrener - All rights reserved.</figcaption>
@@ -40,7 +40,7 @@
 <h2> Useful things </h2>
 
 <ul>
-  <li>I found this image <a href="https://microcontrollerslab.com/atmega328p-microcontroller-pinout-prograamming-features-datasheet/" target="_blank">here</a>. It's nice to use when assembling the device and just as a reference to quickly find a pin on the 328P.<img src="docs/328P-Pinout.png" alt="The 328P pinout." style="width:100%"></li>
+  <li><p align="center">I found this image <a href="https://microcontrollerslab.com/atmega328p-microcontroller-pinout-prograamming-features-datasheet/" target="_blank">here</a>. It's nice to use when assembling the device and just as a reference to quickly find a pin on the 328P.<img src="docs/328P-Pinout.png" alt="The 328P pinout."></p></li>
   <li><a href="https://eleccelerator.com/avr-timer-calculator/" target="_blank">This</a> website is a really nice tool to quickly calculate the value that needs to go in the output compare register (of a timer) to get a specific time.</li>
   <li><a href="https://github.com/abcminiuser/avr-tutorials/blob/master/Timers/Output/Timers.pdf" target="_blank">This</a> PDF from Dean Camera is a really nice read if you'd like to understand how to setup timers. He does it in C but it is very easy to port to AVR ASM.</li>
   <li>You can find the instruction set for the 328P <a href="http://ww1.microchip.com/downloads/en/devicedoc/atmel-0856-avr-instruction-set-manual.pdf" target="_blank">here</a>. This is a nice reference when programming.</li>
