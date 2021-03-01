@@ -17,7 +17,7 @@
 
 <p align="justify">I find my implementation of the DHT communication protocol unique in the sense that it is almost completely interrupt driven. The algorithm only uses a timer to determine the duration of the pulses sent to it by the DHT22. It uses the timer to identify if the DHT22 is sending a one or a zero. By doing this, you don't have to fiddle with the timer values as the algorithm will read the data from the device when it is ready. No polling or delay loops are used! By doing this support for the DHT11 is enabled as you only need to change the initial delay value of the algorithm from 1ms to 18ms, and you also need to change the loop counter from 40 to 41 for the algorithm to work. You will need to make other changes to the code to get it to display the readings from the DHT11 properly.</p>
 
-<p align="justify">The device still needs a software implementation of a debouncer for the push button. Currently no debouncer is used so you may need to push the push button a few times for the device to change the quantity being displayed.</p>
+<p align="justify">The device still needs a software implementation of a debouncer for the push button. Currently no debouncer is used so you may need to press the push button a few times for the device to change the quantity being displayed.</p>
 
 <p align="justify">I'm using an ATmega328P with its internal oscillator which is set to run at 8 MHz. By doing this, I have access to two more IO pins as no external crystal oscillator is connected to them. If you want to use this code on a 328P running at a different frequency, you'll need to recalculate the values for the timer output compare registers.</p>
 
@@ -25,7 +25,7 @@
 
 <h2> Making the device </h2>
 
-<p align="justify"><b>Please be careful when making the device. I'm not responsible if you damage and/or break your property and/or injure or kill living things. It is fairly easy to set the wrong fuse or incorrectly wire something!</b></p>
+<p align="justify">I wouldn't say this is an advanced project, however it is not very beginner friendly. So, <b>please be careful when making the device. I'm not responsible if you damage and/or break your property and/or injure or kill living things. It is fairly easy to set the wrong fuse or incorrectly wire something!</b></p>
 
 <p align="justify">I've made an electrical schematic to show you how to assemble everything. There are probably mistakes in it so use your discretion. You can find the schematic <a href="https://github.com/UntidyRAM/AVR-ASM-DHT22/blob/main/docs/AVR-ASM-DHT22.pdf" target="_blank">here</a>.</p>
 
