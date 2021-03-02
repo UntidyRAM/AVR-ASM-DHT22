@@ -39,6 +39,9 @@
 
 <p align="justify">If you connect PC5 to ground, the indicator RGB LED and the display will turn off. This indicates that the device is in flash mode. Flash mode sets the pins used by the ISP programmer to inputs with high impedance. Doing this enables the ISP device to communicate with the AVR.</p>
 
+<h2> Contributions </h2>
+<p align="justify"> Contributions are welcome! Please file issues, or make pull requests, if you find something that could be improved or if there is an error. </p>
+
 <h2> Useful things </h2>
 
 <ul>
