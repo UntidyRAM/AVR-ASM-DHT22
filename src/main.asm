@@ -2,7 +2,14 @@
  *  main.asm
  *
  *  Created: 10 Feb 2021 02:38:05 PM
- *  Author: Nicholas Warrener
+ *  Author: Nicholas Warrener (UntidyRAM)
+ *
+ *  Description: This is my AVR assembly implementation of the DHT communication protocol. 
+ *               It uses three seven segment displays to show the humidity or temperature and a 
+ *               push button cycles between the humidity and temperature. The decimal point on the 
+ *               last segment turns on when the temperature is below zero. An RGB LED is used to indicate
+ *               what quantity is being displayed. 
+ *
  *  Copyright (C) 2021 Nicholas Warrener
  *  
  *  This program is free software; you can redistribute it and/or modify
@@ -19,8 +26,10 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
+ *  Please look under the documents section for the full license. 
+ *
  *  Release Notes:
- *  25 Feb 2021 - Initial release
+ *  25 Feb 2021 - Initial release. 
  */
 
 ; Assembler Directives
@@ -38,6 +47,8 @@
 
 ; ### Sleep Mode Constants ###
 .SET idle_enable = (0 << SM0) | (0 << SM1) | (0 << SM2) | (1 << SE)
+; Power save is preferred as it saves more power than idle mode. It can't be used during the DHT
+; communication method though as the PCINT won't wake the device in this mode. Only idle mode enables this. 
 .SET power_save_enable = (1 << SM0) | (1 << SM1) | (0 << SM2) | (1 << SE)
 
 ; ### Pin Interrupt Constants ###
