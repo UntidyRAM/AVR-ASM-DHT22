@@ -1,6 +1,6 @@
-<h1> AVR-ASM-DHT22 :thermometer: </h1>
+<h1>AVR-ASM-DHT22 :thermometer:</h1>
 
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+<img src="https://img.shields.io/badge/License-GPL%20v2-blue.svg" alt="GPL 2 license badge">
 
 <p align="center">
   <figure>
@@ -13,7 +13,7 @@
 
 <p align="justify">Some of the design choices are a bit odd. For example, I have used an RGB LED to indicate the quantity being displayed. I would much prefer to indicate the quantity being displayed on the 7 segment displays but I only have three. The same can be said for using the decimal point on the last 7 segment display to indicate that the temperature is below zero. I would like to show a minus sign on the display but that would mean I'd have to truncate the value being displayed.</p>
 
-<h2> Implementation Notes </h2>
+<h2>Implementation Notes</h2>
 
 <p align="justify">In general, the device is interrupt driven so no delay loops are used! This makes for a much more elegant and efficient solution.</p>
 
@@ -25,7 +25,7 @@
 
 <p align="justify">This device uses the watchdog timer (WDT) to make sure that the program does not get stuck waiting for a faulty or incorrectly connected DHT22. It is set to timeout every two seconds. If you make changes to the code and they cause the program execution to take longer than two seconds, you will need to increase the duration of the WDT. I recommend that you disable the WDT when making modifications and only once you know the modifications function correctly, then you should turn on the watchdog and see if it needs adjustment.</p>
 
-<h2> Making the device </h2>
+<h2>Making the Device</h2>
 
 <p align="justify">I wouldn't say this is an advanced project, however it is not very beginner friendly. So, <b>please be careful when making the device. I'm not responsible if you damage and/or break property and/or injure or kill living things. It is fairly easy to set the wrong fuse or incorrectly wire something!</b></p>
 
@@ -35,16 +35,16 @@
 
 <p align="justify"><b>IF YOU DO NOT HAVE A SNAP THEN DO NOT SET THE DWEN FUSE, YOU WILL BE UNABLE TO COMMUNICATE WITH THE 328P. USE OF AN ON-CHIP DEBUGGER IS OPTIONAL.</b></br/><br/>I caved in and bought myself an <a href="https://www.microchip.com/developmenttools/ProductDetails/PartNO/PG164100" target="_blank">MPLAB Snap</a> which enabled me to perform on chip debugging. This made debugging much less painful. To connect the Snap to the device, connect pin 2 of the Snap to VCC, pin 3 to GND and pin 6 to the reset pin on the 328P (PC6). If you want to use the Snap in Atmel Studio (now Microchip Studio), you need to enable the DWEN fuse on the 328P. Enabling this fuse will disable ISP programming and enable debugWire. To re-enable ISP programming, you need to open Atmel Studio, run a debug session, and then click the Debug menu at the top and click "Disable debugWire and close." Please see <a href="https://microchipdeveloper.com/boards:debugbrick" target="_blank">here</a> for more information.</p>
 
-<h2> How to use this device </h2>
+<h2>How to Use</h2>
 <p align="justify"><b>Please do not use this device in applications where should the device malfunction and/or fail, injury or loss of life (of any kind) and/or property can occur!</b></p>
 <p align="justify"> When the device powers up, you will see "---" displayed on the segments. This informs the user that the device is on and that it is gathering its first measurement. If you see "---" after the device has been powered up for more than 15 seconds, then there is a fault with the DHT22.</p>
 
 <p align="justify">If you connect PC5 to ground, the indicator RGB LED and the display will turn off. This indicates that the device is in flash mode. Flash mode sets the pins used by the ISP programmer to inputs with high impedance. Doing this enables the ISP device to communicate with the AVR.</p>
 
-<h2> Contributions </h2>
-<p align="justify"> Contributions are welcome! Please file issues, or make pull requests, if you find something that could be improved or if there is an error. </p>
+<h2>Contributions</h2>
+<p align="justify"> Contributions are welcome! Please file issues, or make pull requests, if you find something that could be improved or if there is an error.</p>
 
-<h2> Useful things </h2>
+<h2>Useful Things</h2>
 
 <ul>
   <li>I found this image <a href="https://microcontrollerslab.com/atmega328p-microcontroller-pinout-prograamming-features-datasheet/" target="_blank">here</a>. It's nice to use when assembling the device and just as a reference to quickly find a pin on the 328P.<p align="center"><img src="docs/328P-Pinout.png" alt="The 328P pinout."></p></li>
