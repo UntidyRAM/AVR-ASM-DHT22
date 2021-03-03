@@ -11,6 +11,8 @@
 
 <p align="justify">This project uses three seven-segment displays to show humidity and temperature measurements from a DHT22. A push button is used to switch between readings. The decimal segment of the third display turns on when the temperature is below 0°C. An RGB LED is used to indicate to the user what quantity is being displayed. If the LED is green, the device is displaying the humidity and if the LED is red, the device is displaying the temperature. The device only shows measurements in Celsius! This project uses no libraries and is programmed entirely in AVR assembly.</p>
 
+<p align="justify">Some of the design choices are a bit odd. For example, I have used an RGB LED to indicate the quantity being displayed. I would much prefer to indicate the quantity being displayed on the 7 segment displays but I only have three. The same can be said for using the decimal point on the last 7 segment display to indicate that the temperature is below zero. I would like to show a minus sign on the display but that would mean I'd have to truncate the value being displayed.</p>
+
 <h2> Implementation Notes </h2>
 
 <p align="justify">In general, the device is interrupt driven so no delay loops are used! This makes for a much more elegant and efficient solution.</p>
