@@ -9,9 +9,7 @@
   </figure>
 </p>
 
-<p align="justify">This project uses three seven-segment displays to show humidity and temperature measurements from a DHT22. A push button is used to switch between readings. The decimal segment of the third display turns on when the temperature is below 0°C. An RGB LED is used to indicate to the user what quantity is being displayed. If the LED is green, the device is displaying the humidity and if the LED is red, the device is displaying the temperature. The device only shows measurements in Celsius! This project uses no libraries and is programmed entirely in AVR assembly.</p>
-
-<p align="justify">Some of the design choices are a bit odd. For example, I have used an RGB LED to indicate the quantity being displayed. I would much prefer to indicate the quantity being displayed on the 7 segment displays but I only have three. The same can be said for using the decimal point on the last 7 segment display to indicate that the temperature is below zero. I would like to show a minus sign on the display but that would mean I'd have to truncate the value being displayed.</p>
+<p align="justify">This project uses four seven-segment displays to show humidity and temperature measurements from a DHT22. A push button is used to switch between readings. A red LED turns on when the temperature is below 0°C. The device only shows measurements in Celsius! This project uses no libraries and is programmed entirely in AVR assembly.</p>
 
 <h2>Implementation Notes</h2>
 
@@ -37,9 +35,9 @@
 
 <h2>How to Use</h2>
 <p align="justify"><b>Please do not use this device in applications where should the device malfunction and/or fail, injury or loss of life (of any kind) and/or property can occur!</b></p>
-<p align="justify"> When the device powers up, you will see "---" displayed on the segments. This informs the user that the device is on and that it is gathering its first measurement. If you see "---" after the device has been powered up for more than 15 seconds, then there is a fault with the DHT22.</p>
+<p align="justify"> When the device powers up, you will see "----" displayed on the segments. This informs the user that the device is on and that it is gathering its first measurement. If you see "----" after the device has been powered up for more than 15 seconds, then there is a fault with the DHT22.</p>
 
-<p align="justify">If you connect PC5 to ground, the indicator RGB LED and the display will turn off. This indicates that the device is in flash mode. Flash mode sets the pins used by the ISP programmer to inputs with high impedance. Doing this enables the ISP device to communicate with the AVR.</p>
+<p align="justify">If you connect PC5 to ground, the display will turn off. This indicates that the device is in flash mode. Flash mode sets the pins used by the ISP programmer to inputs with high impedance. Doing this enables the ISP device to communicate with the AVR.</p>
 
 <h2>Contributions</h2>
 <p align="justify"> Contributions are welcome! Please file issues, or make pull requests, if you find something that could be improved or if there is an error.</p>
