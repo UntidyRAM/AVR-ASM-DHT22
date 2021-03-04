@@ -5,10 +5,11 @@
  *  Author: Nicholas Warrener (UntidyRAM)
  *
  *  Description: This is my AVR assembly implementation of the DHT communication protocol. 
- *               It uses three seven segment displays to show the humidity or temperature and a 
- *               push button cycles between the humidity and temperature. The decimal point on the 
- *               last segment turns on when the temperature is below zero. An RGB LED is used to indicate
- *               what quantity is being displayed. 
+ *               It uses four seven segment displays to show the humidity or temperature and a 
+ *               push button cycles between the humidity and temperature. A red LED turns on when
+ *               the temperature is below zero Celsius. When the display is showing the temperature,
+ *               the fourth segment displays a "C". When the display is showing the humidity, the
+ *               fourth segment displays an "H".
  *
  *  Copyright (C) 2021 Nicholas Warrener
  *  
@@ -30,6 +31,11 @@
  *
  *  Release Notes:
  *  25 Feb 2021 - Initial release. 
+ *  4 March 2021 - Changed code to use four seven segment displays.
+ *               - A red LED turns on when the temperature is below zero.
+ *               - When the temperature is displayed, the fourth display shows a "C".
+ *               - When the humidity is displayed, the fourth display shows an "H".
+ *               - Please see the schematic for the updates in the wiring.
  */
 
 ; Assembler Directives
@@ -77,6 +83,7 @@
 
 	; Utility
 	toggle: .BYTE 1 ; We use this byte to work out what value is being displayed. We then know to display the opposite value
+	quantityUnit: .BYTE 1 ; This byte holds the bit pattern to either display a "C" or an "H" on the display
 
 ; Program memory
 .CSEG
@@ -113,6 +120,21 @@ ISR_PUSH_BUTTON:
 	EOR R16, R17
 	STS toggle, R16
 
+	LDS R16, toggle
+	CPI R16, 0
+	BREQ ISR_PUSH_BUTTON_tempUnit
+	
+ISR_PUSH_BUTTON_humUnit:
+	LDI R16, 0b0111_0110
+	STS quantityUnit, R16 
+	RJMP ISR_PUSH_BUTTON_unitsDone
+
+ISR_PUSH_BUTTON_tempUnit:
+	LDI R16, 0b0011_1001
+	STS quantityUnit, R16 
+
+ISR_PUSH_BUTTON_unitsDone:
+
 	; Now we change the quantity being displayed
 	; I know its bad practice to call long routines inside of an ISR but this seems to work.
 	; By doing this, we make device much more responsive to changes in the push button.
@@ -126,7 +148,6 @@ ISR_PUSH_BUTTON:
 	RCALL CVRT_start ; Convert the values into BCD
 	RCALL LKP_start ; Convert the BCD values into bit patterns to display
 	RCALL DHT_neg_led ; Turn on the negative temperature indicator LED if the temperature is below 0
-	RCALL UNIT_INDICATOR_update ; This changes the colour of the status LED so the user knows what quantity is being displayed
 
 	OUT SREG, R20
 
@@ -160,6 +181,8 @@ ISR_WATCHDOG:
 	SBI DDRB, 6
 
 	; Activate the transistors
+	SBI PORTD, 4
+	SBI DDRD, 4
 	SBI PORTD, 5
 	SBI DDRD, 5
 	SBI PORTD, 6
@@ -266,14 +289,21 @@ init:
 
 	SEI
 
-	; We set the displays to show "---" while the DHT22 gets data.
+	; We set the displays to show "----" while the DHT22 gets data.
 	; We do this so that the user knows the device is powered on.
 	LDI R16, 0b0100_0000
 	MOV R1, R16
 	MOV R2, R16
 	MOV R6, R16
+	STS quantityUnit, R16
 
 	RCALL DSP_init
+
+	; This bit pattern will display the unit of the quantity being shown.
+	; We set the bit patten to show the temperature unit "C" as this is the
+	; default value to display.
+	LDI R16, 0b0011_1001
+	STS quantityUnit, R16
 
 	CLR R17
 	CLR R18
@@ -308,9 +338,7 @@ update:
 
 	RCALL DHT_start ; Get the values from DHT22
 	RCALL DHT_neg_led ; Turn on the negative temperature indicator LED if the temperature is below zero
-	RCALL UNIT_INDICATOR_update ; This changes the colour of the status LED so the user knows what quantity is being displayed
 	RCALL DIV_start ; Divide one set of values by 10
-	RCALL DECIMAL_start
 	RCALL CVRT_start ; Convert the values into BCD
 	RCALL LKP_start ; Convert the BCD values into bit patterns to display
 RJMP innerLoop
@@ -336,12 +364,6 @@ FLASH_loop:
 	CLR R16
 	OUT DDRB, R16
 	OUT PORTB, R16
-
-	; Turn off indicator RGB LED by setting pins to high impedance inputs
-	CBI PORTC, 0
-	CBI DDRC, 0
-	CBI PORTC, 1
-	CBI DDRC, 1
 RJMP FLASH_loop
 RET
 
@@ -531,8 +553,8 @@ DHT_neg_led:
 	CLR R16
 
 	; Turn off the LED
-	CBI PORTD, 4
-	CBI DDRD, 4
+	CBI PORTD, 3
+	CBI DDRD, 3
 
 	; First we make sure we aren't displaying humidity
 	; If we are displaying humidity, skip the rest of the
@@ -548,50 +570,13 @@ DHT_neg_led:
 	RJMP DHT_neg_led_done
 	
 	; Turn on the LED
-	SBI PORTD, 4
-	SBI DDRD, 4
+	SBI PORTD, 3
+	SBI DDRD, 3
 
 DHT_neg_led_done:
 	POP R16
 RET
 
-UNIT_INDICATOR_update:
-	PUSH R16
-
-	CLR R16
-
-	; Because the RGB LED is common anode, common pin is supplied with 5V and then the other pins are grounded.
-	; By grounding the other pins, you select which colour is displayed.
-	; If the LED is common cathode, then you do the above the other way round.
-	; First, we stop PC0 and PC1 from sinking current. To do this, we set them to high impedance mode.
-	CBI PORTC, 0
-	CBI DDRC, 0
-
-	CBI PORTC, 1
-	CBI DDRC, 1
-
-	; Now, we check what quantity is being displayed and turn on the appropriate LED
-	LDS R16, toggle
-	CPI R16, 1
-	BREQ UNIT_INDICATOR_update_temp
-
-UNIT_INDICATOR_update_temp_hum:
-	; We want PC1 to sink the current so that the green LED turns on
-	SBI DDRC, 1
-	CBI PORTC, 1
-	RJMP UNIT_INDICATOR_update_done
-
-
-UNIT_INDICATOR_update_temp:
-	; We want PC0 to sink the current so that the red LED turns on.
-	SBI DDRC, 0
-	CBI PORTC, 0
-
-UNIT_INDICATOR_update_done:
-
-	POP R16
-RET
-	
 ; This method takes a 16 bit number (stored in a pair of registers) and divides it by ten
 DIV_start:
 	PUSH R16 
@@ -661,30 +646,6 @@ DIV_done:
 	POP R19
 	POP R18
 	POP R17
-	POP R16
-RET
-
-DECIMAL_start:
-	PUSH R16
-
-	CLR R16
-
-	; We start by assuming that the value to display is less than 100
-	; So we can turn on the decimal point
-	SBI PORTD, 1
-	SBI DDRD, 1
-
-	; Now we check if the value to be displayed is less than 100
-	LDS R16, wholeNumber
-	CPI R16, 100
-	BRLO DECIMAL_done
-
-	; If we get here, then the value is 100 so we turn off the decimal point
-	CBI PORTD, 1
-	CBI DDRD, 1
-
-	DECIMAL_done:
-
 	POP R16
 RET
 
@@ -804,30 +765,39 @@ DSP_init:
 
 	; We will use a part of port D to supply 5V to the base of the NPN transistors. This turns the transistors "on" which grounds the corresponding display.
 	IN R16, PORTD
-	ANDI R16, 0b0001_1111
+	ANDI R16, 0b0000_1111
 	OUT PORTD, R16
 
 	; DDR register must always be set to high so that this combined with a one or zero in the port register will set the pin to high or low, respectively.
 	IN R16, DDRD
-	ANDI R16, 0b0001_1111
-	ORI R16, 0b1110_0000
+	ANDI R16, 0b0000_1111
+	ORI R16, 0b1111_0000
 	OUT DDRD, R16
 
 ; We assign values to the port which will turn on the appropriate segments on the 7 segment displays.
 DSP_start:
     ; Set segment one to display the tens digit
 	MOV R17, R1 ; This is the digit we want to display
-	LDI R16, 0b0010_0000 ; We ground display one
+	LDI R16, 0b0001_0000 ; We want to ground display one
 	RCALL DSP_display
 
 	; Set segment two to display the units digit
 	MOV R17, R2
-	LDI R16, 0b0100_0000 ; We ground display two
+	LDI R16, 0b0010_0000 ; We want to ground display two
+
+	; Before we display the number, we need to turn on the
+	; decimal point.
+	ORI R17, 0b1000_0000
 	RCALL DSP_display
 
 	; Set segment three to display the remainder digit
 	MOV R17, R6
-	LDI R16, 0b1000_0000 ; We ground display three
+	LDI R16, 0b0100_0000 ; We want to ground display three
+	RCALL DSP_display
+
+	; Set segment four to display the unit of the quantity being displayed
+	LDS R17, quantityUnit
+	LDI R16, 0b1000_0000 ; We want to ground display four
 	RCALL DSP_display
 
 	POP R17
@@ -836,13 +806,13 @@ RET
 
 DSP_display:
 	; We use the same register for both instructions because we want to set the pin to output and set the value to high
-	OUT PORTB, R17 ; We set some pins of port c to output
-	OUT DDRB, R17 ; We set some pins in port c to high
+	OUT PORTB, R17 ; We set some pins of PORTB to output
+	OUT DDRB, R17 ; We set some pins in DDRB to high
 
 	; We musn't change the whole of PORTD because other things are connected to it besides the transistors.
-	; We must only change PD5, PD6 and PD7.
+	; We must only change PD4, PD5, PD6 and PD7.
 	IN R17, PORTD
-	ANDI R17, 0b0001_1111
+	ANDI R17, 0b0000_1111
 	ADD R16, R17
 	OUT PORTD, R16 ; We set one of the pins to high in PORTD so that we can turn on a transistor which will connect one of the displays to ground.
 	
@@ -863,9 +833,9 @@ DSP_display:
 	OUT DDRB, R17 
 
 	; We musn't change the whole of PORTD because other things are connected to it besides the transistors.
-	; We must only change PD5, PD6 and PD7.
+	; We must only change PD4, PD5, PD6 and PD7.
 	IN R17, PORTD
-	ANDI R17, 0b0001_1111
+	ANDI R17, 0b0000_1111
 	OUT PORTD, R17 ; We set one of the pins to low in PORTD so that we can turn off a transistor which will disconnect one of the displays from ground.
 
 	; We need to sleep for a little bit (3.5 microseconds) so that the transistor has time to turn off.
