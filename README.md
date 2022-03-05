@@ -25,7 +25,7 @@
 
 <h2>Making the Device</h2>
 
-<p align="justify">I've made an electrical schematic to show you how to assemble everything. There are probably mistakes in it so use your discretion. You can find the schematic <a href="https://github.com/UntidyRAM/AVR-ASM-DHT22/blob/main/docs/AVR-ASM-DHT22.pdf" target="_blank">here</a>.</p>
+<p align="justify">I've made an electrical schematic to show you how to assemble everything. You can find the schematic <a href="https://github.com/UntidyRAM/AVR-ASM-DHT22/blob/main/docs/AVR-ASM-DHT22.pdf" target="_blank">here</a>.</p>
 
 <p align="justify">I programmed the 328P using a <a href="https://www.fischl.de/usbasp/" target="_blank">USBasp</a> ISP programmer. I don't have a bootloader on the 328P as the internal oscillator is inaccurate and will probably cause issues with serial communication. I'm assuming you're using a 328P that has not been used before. It should be set to use the internal oscilator. If it has been modified, you will need to restore the fuses to their factory configuration. You can do this and flash code using a USBasp and AVRDUDESS.</p>
 
